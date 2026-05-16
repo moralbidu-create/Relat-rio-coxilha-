@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Controle Inteligente de Irrigação</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#0B1720;
+  color:#fff;
+  padding:15px;
+}
+
+.topo{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.topo h1{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.topo p{
+  color:#B0BEC5;
+}
+
+.autor{
+  margin-top:10px;
+  display:inline-block;
+  background:#1E88E5;
+  padding:10px 22px;
+  border-radius:30px;
+  font-weight:bold;
+  box-shadow:0 0 15px rgba(30,136,229,0.4);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:#ffffff;
+  color:#000;
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 5px 25px rgba(0,0,0,0.25);
+}
+
+.card h2{
+  color:#1565C0;
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  margin-bottom:5px;
+  font-weight:bold;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+textarea{
+  resize:none;
+  min-height:80px;
+}
+
+button{
+  width:100%;
+  border:none;
+  padding:14px;
+  border-radius:14px;
+  margin-top:12px;
+  color:#fff;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.02);
+}
+
+.btn-now{
+  background:#1976D2;
+}
+
+.btn-gerar{
+  background:#2E7D32;
+}
+
+.btn-copy{
+  background:#6A1B9A;
+}
+
+.btn-whats{
+  background:#00A884;
+}
+
+.status{
+  margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:bold;
+  color:#fff;
+}
+
+.irrigando{
+  background:#1E88E5;
+}
+
+.seco{
+  background:#8D6E63;
+}
+
+.parado{
+  background:#E53935;
+}
+
+.finalizado{
+  background:#8E24AA;
+}
+
+.output{
+  margin-top:25px;
+  background:#111827;
+  color:#E5FFE9;
+  padding:25px;
+  border-radius:22px;
+  white-space:pre-line;
+  line-height:1.8;
+  border:2px solid #1F2937;
+  font-size:15px;
+}
+
+.acoes{
+  margin-top:20px;
+  display:grid;
+  gap:12px;
+}
+
+footer{
+  text-align:center;
+  margin-top:30px;
+  color:#CFD8DC;
+  font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+
+<h1>🌾 Controle de Irrigação</h1>
+
+<p>Painel Inteligente Fazenda Coxilha</p>
+
+<div class="autor">
+👨‍💻 TALYS
+</div>
+
+</div>
+
+<div class="grid">
+
+<!-- PIVÔ 1 -->
+
+<div class="card">
+
+<h2>💧 Pivô 1</h2>
+
+<label>Status</label>
+
+<select id="status1" onchange="trocarStatus(1)">
+<option>Está irrigando</option>
+<option>Está rodando a seco</option>
+<option>Irrigação parada</option>
+<option>Finalizou irrigação</option>
+</select>
+
+<div id="badge1" class="status irrigando">
+💦 Está irrigando
+</div>
+
+<label>🕒 Início</label>
+<input type="time" id="inicio1">
+
+<button type="button" class="btn-now" onclick="setNow('inicio1')">
+📍 Agora
+</button>
+
+<label>🕒 Fim</label>
+<input type="time" id="fim1">
+
+<button type="button" class="btn-now" onclick="setNow('fim1')">
+📍 Agora
+</button>
+
+<label>🔄 Sentido</label>
+
+<select id="sentido1">
+<option value="">Selecione</option>
+<option>Horário</option>
+<option>Anti-horário</option>
+</select>
+
+<label>📊 Percentual Atual</label>
+<input type="number" id="percent1">
+
+<label>⏱️ Horas Trabalhadas</label>
+<input type="text" id="horas1" readonly>
+
+<label>📝 Observações</label>
+<textarea id="obs1"></textarea>
+
+</div>
+
+<!-- PIVÔ 2 -->
+
+<div class="card">
+
+<h2>💧 Pivô 2</h2>
+
+<label>Status</label>
+
+<select id="status2" onchange="trocarStatus(2)">
+<option>Está irrigando</option>
+<option>Está rodando a seco</option>
+<option>Irrigação parada</option>
+<option>Finalizou irrigação</option>
+</select>
+
+<div id="badge2" class="status irrigando">
+💦 Está irrigando
+</div>
+
+<label>📍 Local</label>
+
+<select id="local2">
+<option value="">Selecione</option>
+<option>Gleba 6</option>
+<option>Gleba 7</option>
+<option>No Giro</option>
+</select>
+
+<label>🕒 Início</label>
+<input type="time" id="inicio2">
+
+<button type="button" class="btn-now" onclick="setNow('inicio2')">
+📍 Agora
+</button>
+
+<label>🕒 Fim</label>
+<input type="time" id="fim2">
+
+<button type="button" class="btn-now" onclick="setNow('fim2')">
+📍 Agora
+</button>
+
+<label>🔄 Sentido</label>
+
+<select id="sentido2">
+<option value="">Selecione</option>
+<option>Horário</option>
+<option>Anti-horário</option>
+</select>
+
+<label>📊 Percentual Atual</label>
+<input type="number" id="percent2">
+
+<label>📈 Horímetro Inicial</label>
+<input type="number" id="horimetroInicial2">
+
+<label>📈 Horímetro Final</label>
+<input type="number" id="horimetroFinal2">
+
+<label>📈 Total Trabalhado</label>
+<input type="text" id="totalHorimetro2" readonly>
+
+<label>⏱️ Horas Trabalhadas</label>
+<input type="text" id="horas2" readonly>
+
+<label>📝 Observações</label>
+<textarea id="obs2"></textarea>
+
+</div>
+
+</div>
+
+<div class="acoes">
+
+<button type="button" class="btn-gerar" onclick="gerarRelatorio()">
+📄 Gerar Relatório
+</button>
+
+<button type="button" class="btn-copy" onclick="copiarRelatorio()">
+📋 Copiar Relatório
+</button>
+
+<button type="button" class="btn-whats" onclick="enviarWhatsApp()">
+📲 WhatsApp
+</button>
+
+</div>
+
+<div class="output" id="resultado"></div>
+
+<footer>
+🌾 Desenvolvido por TALYS
+</footer>
+
+<script>
+
+function setNow(id){
+
+  const agora = new Date();
+
+  const hora =
+    String(agora.getHours()).padStart(2,'0') +
+    ':' +
+    String(agora.getMinutes()).padStart(2,'0');
+
+  document.getElementById(id).value = hora;
+
+  atualizarHoras();
+  salvar();
+}
+
+function trocarStatus(p){
+
+  const status = document.getElementById('status' + p).value;
+
+  const badge = document.getElementById('badge' + p);
+
+  badge.className = 'status';
+
+  if(status.includes('irrigando')){
+
+    badge.classList.add('irrigando');
+    badge.innerHTML = '💦 ' + status;
+
+  }else if(status.includes('seco')){
+
+    badge.classList.add('seco');
+    badge.innerHTML = '🌵 ' + status;
+
+  }else if(status.includes('parada')){
+
+    badge.classList.add('parado');
+    badge.innerHTML = '⛔ ' + status;
+
+  }else{
+
+    badge.classList.add('finalizado');
+    badge.innerHTML = '✅ ' + status;
+  }
+
+  salvar();
+}
+
+function calcularHoras(inicio,fim){
+
+  if(!inicio || !fim){
+    return '';
+  }
+
+  const i = inicio.split(':');
+  const f = fim.split(':');
+
+  const d1 = new Date();
+  const d2 = new Date();
+
+  d1.setHours(i[0],i[1],0);
+  d2.setHours(f[0],f[1],0);
+
+  if(d2 < d1){
+    d2.setDate(d2.getDate() + 1);
+  }
+
+  const minutos = (d2 - d1) / 60000;
+
+  const horas = Math.floor(minutos / 60);
+  const resto = Math.floor(minutos % 60);
+
+  return horas + 'h ' + resto + 'min';
+}
+
+function atualizarHoras(){
+
+  document.getElementById('horas1').value =
+    calcularHoras(
+      document.getElementById('inicio1').value,
+      document.getElementById('fim1').value
+    );
+
+  document.getElementById('horas2').value =
+    calcularHoras(
+      document.getElementById('inicio2').value,
+      document.getElementById('fim2').value
+    );
+
+  calcularHorimetro();
+}
+
+function calcularHorimetro(){
+
+  const inicial =
+    parseFloat(document.getElementById('horimetroInicial2').value);
+
+  const final =
+    parseFloat(document.getElementById('horimetroFinal2').value);
+
+  if(!isNaN(inicial) && !isNaN(final)){
+
+    document.getElementById('totalHorimetro2').value =
+      (final - inicial).toFixed(1) + ' horas';
+
+  }else{
+
+    document.getElementById('totalHorimetro2').value = '';
+  }
+}
+
+function salvar(){
+
+  const dados = {};
+
+  document.querySelectorAll('input,select,textarea')
+  .forEach(function(campo){
+
+    if(campo.id){
+      dados[campo.id] = campo.value;
+    }
+
+  });
+
+  localStorage.setItem(
+    'controle_irrigacao_fast',
+    JSON.stringify(dados)
+  );
+}
+
+function carregar(){
+
+  const dados =
+    JSON.parse(
+      localStorage.getItem('controle_irrigacao_fast') || '{}'
+    );
+
+  Object.keys(dados).forEach(function(id){
+
+    const campo = document.getElementById(id);
+
+    if(campo){
+      campo.value = dados[id];
+    }
+
+  });
+
+  trocarStatus(1);
+  trocarStatus(2);
+  atualizarHoras();
+}
+
+// VALIDAÇÃO COMPLETA DOS PIVÔS
+
+function pivo1Completo(){
+
+  return (
+    document.getElementById('inicio1').value.trim() !== '' &&
+    document.getElementById('fim1').value.trim() !== '' &&
+    document.getElementById('percent1').value.trim() !== '' &&
+    document.getElementById('sentido1').value.trim() !== ''
+  );
+}
+
+function pivo2Completo(){
+
+  return (
+    document.getElementById('inicio2').value.trim() !== '' &&
+    document.getElementById('fim2').value.trim() !== '' &&
+    document.getElementById('percent2').value.trim() !== '' &&
+    document.getElementById('sentido2').value.trim() !== '' &&
+    document.getElementById('local2').value.trim() !== ''
+  );
+}
+
+function gerarRelatorio(){
+
+  let relatorio = '';
+
+  const data = new Date().toLocaleDateString('pt-BR');
+
+  relatorio += '🌾══════════════════════🌾\n';
+  relatorio += 'RELATÓRIO DE IRRIGAÇÃO FAZENDA COXILHA\n';
+  relatorio += '🌾══════════════════════🌾\n\n';
+
+  relatorio += '📅 Data: ' + data + '\n\n';
+
+  // =========================
+  // PIVÔ 1
+  // =========================
+
+  if(pivo1Completo()){
+
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '💧 PIVÔ 1\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    relatorio += '📌 Status: ' +
+      document.getElementById('status1').value + '\n';
+
+    relatorio += '🕒 Início: ' +
+      document.getElementById('inicio1').value + '\n';
+
+    relatorio += '🕒 Fim: ' +
+      document.getElementById('fim1').value + '\n';
+
+    relatorio += '🔄 Sentido: ' +
+      document.getElementById('sentido1').value + '\n';
+
+    relatorio += '📊 Percentual Atual: ' +
+      document.getElementById('percent1').value + '%\n\n';
+
+    relatorio += '⏱️ Horas Trabalhadas:\n';
+    relatorio += document.getElementById('horas1').value + '\n\n';
+
+    relatorio += '📝 Observações:\n';
+    relatorio += (document.getElementById('obs1').value || 'Sem observações') + '\n\n';
+  }
+
+  // =========================
+  // PIVÔ 2
+  // =========================
+
+  if(pivo2Completo()){
+
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '💧 PIVÔ 2\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    relatorio += '📌 Status: ' +
+      document.getElementById('status2').value + '\n';
+
+    relatorio += '📍 Local: ' +
+      document.getElementById('local2').value + '\n';
+
+    relatorio += '🕒 Início: ' +
+      document.getElementById('inicio2').value + '\n';
+
+    relatorio += '🕒 Fim: ' +
+      document.getElementById('fim2').value + '\n';
+
+    relatorio += '🔄 Sentido: ' +
+      document.getElementById('sentido2').value + '\n';
+
+    relatorio += '📊 Percentual Atual: ' +
+      document.getElementById('percent2').value + '%\n\n';
+
+    relatorio += '⏱️ Horas Trabalhadas:\n';
+    relatorio += document.getElementById('horas2').value + '\n\n';
+
+    relatorio += '📈 Horímetro Inicial: ' +
+      (document.getElementById('horimetroInicial2').value || '-') + '\n';
+
+    relatorio += '📈 Horímetro Final: ' +
+      (document.getElementById('horimetroFinal2').value || '-') + '\n';
+
+    relatorio += '📈 Total Trabalhado: ' +
+      (document.getElementById('totalHorimetro2').value || '-') + '\n\n';
+
+    relatorio += '📝 Observações:\n';
+    relatorio += (document.getElementById('obs2').value || 'Sem observações') + '\n\n';
+  }
+
+  // =========================
+  // SEM DADOS
+  // =========================
+
+  if(!pivo1Completo() && !pivo2Completo()){
+
+    relatorio = '⚠️ Nenhum pivô possui informações completas.';
+  }else{
+
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '👨‍💻 Desenvolvido por TALYS';
+  }
+
+  document.getElementById('resultado').innerText = relatorio;
+
+  salvar();
+}
+
+function copiarRelatorio(){
+
+  const texto =
+    document.getElementById('resultado').innerText;
+
+  if(!texto){
+    alert('Gere um relatório primeiro.');
+    return;
+  }
+
+  navigator.clipboard.writeText(texto);
+
+  alert('✅ Relatório copiado!');
+}
+
+function enviarWhatsApp(){
+
+  const texto =
+    document.getElementById('resultado').innerText;
+
+  if(!texto){
+    alert('Gere um relatório primeiro.');
+    return;
+  }
+
+  const url =
+    'https://wa.me/?text=' +
+    encodeURIComponent(texto);
+
+  window.open(url,'_blank');
+}
+
+document.addEventListener('input',function(){
+
+  atualizarHoras();
+  salvar();
+
+});
+
+window.onload = carregar;
+
+</script>
+
+</body>
+</html>
