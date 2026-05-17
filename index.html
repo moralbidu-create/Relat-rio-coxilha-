@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Controle Inteligente de Irrigação</title>
-
-<meta name="theme-color" content="#1565C0">
 
 <style>
 
@@ -58,7 +52,7 @@ body{
 }
 
 .card{
-  background:#fff;
+  background:#ffffff;
   color:#000;
   border-radius:22px;
   padding:20px;
@@ -102,6 +96,11 @@ button{
   font-weight:bold;
   font-size:15px;
   cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.02);
 }
 
 .btn-now{
@@ -155,6 +154,7 @@ button{
   line-height:1.8;
   border:2px solid #1F2937;
   font-size:15px;
+  word-break:break-word;
 }
 
 .acoes{
@@ -170,17 +170,17 @@ footer{
   font-size:14px;
 }
 
-.info{
-  margin-top:20px;
-  background:#1565C0;
-  padding:14px;
+.offline-box{
+  margin-top:15px;
+  background:#1B5E20;
+  padding:12px;
   border-radius:14px;
   text-align:center;
   font-weight:bold;
+  color:#fff;
 }
 
 </style>
-
 </head>
 
 <body>
@@ -195,10 +195,10 @@ footer{
 👨‍💻 TALYS
 </div>
 
+<div class="offline-box" id="offlineStatus">
+✅ Aplicativo Offline Ativo
 </div>
 
-<div class="info">
-✅ OTIMIZADO PARA APK KODULAR
 </div>
 
 <div class="grid">
@@ -225,16 +225,14 @@ footer{
 <label>🕒 Início</label>
 <input type="time" id="inicio1">
 
-<button class="btn-now"
-onclick="setNow('inicio1')">
+<button type="button" class="btn-now" onclick="setNow('inicio1')">
 📍 Agora
 </button>
 
 <label>🕒 Fim</label>
 <input type="time" id="fim1">
 
-<button class="btn-now"
-onclick="setNow('fim1')">
+<button type="button" class="btn-now" onclick="setNow('fim1')">
 📍 Agora
 </button>
 
@@ -288,16 +286,14 @@ onclick="setNow('fim1')">
 <label>🕒 Início</label>
 <input type="time" id="inicio2">
 
-<button class="btn-now"
-onclick="setNow('inicio2')">
+<button type="button" class="btn-now" onclick="setNow('inicio2')">
 📍 Agora
 </button>
 
 <label>🕒 Fim</label>
 <input type="time" id="fim2">
 
-<button class="btn-now"
-onclick="setNow('fim2')">
+<button type="button" class="btn-now" onclick="setNow('fim2')">
 📍 Agora
 </button>
 
@@ -319,9 +315,7 @@ onclick="setNow('fim2')">
 <input type="number" id="horimetroFinal2">
 
 <label>📈 Total Trabalhado</label>
-<input type="text"
-id="totalHorimetro2"
-readonly>
+<input type="text" id="totalHorimetro2" readonly>
 
 <label>⏱️ Horas Trabalhadas</label>
 <input type="text" id="horas2" readonly>
@@ -335,25 +329,23 @@ readonly>
 
 <div class="acoes">
 
-<button class="btn-gerar"
-onclick="gerarRelatorio()">
+<button type="button" class="btn-gerar" onclick="gerarRelatorio()">
 📄 Gerar Relatório
 </button>
 
-<button class="btn-copy"
-onclick="copiarRelatorio()">
+<button type="button" class="btn-copy" onclick="copiarRelatorio()">
 📋 Copiar Relatório
 </button>
 
-<button class="btn-whats"
-onclick="enviarWhatsApp()">
-📲 Enviar para WhatsApp
+<button type="button" class="btn-whats" onclick="enviarWhatsApp()">
+📲 Enviar no WhatsApp
 </button>
 
 </div>
 
-<div class="output"
-id="resultado"></div>
+<div class="output" id="resultado">
+📄 O relatório aparecerá aqui...
+</div>
 
 <footer>
 🌾 Desenvolvido por TALYS
@@ -361,77 +353,54 @@ id="resultado"></div>
 
 <script>
 
-/* ========= HORA ========= */
-
 function setNow(id){
 
   const agora = new Date();
 
   const hora =
-    String(agora.getHours())
-    .padStart(2,'0')
-    + ':'
-    +
-    String(agora.getMinutes())
-    .padStart(2,'0');
+    String(agora.getHours()).padStart(2,'0') +
+    ':' +
+    String(agora.getMinutes()).padStart(2,'0');
 
-  document.getElementById(id).value =
-    hora;
+  document.getElementById(id).value = hora;
 
   atualizarHoras();
-
   salvar();
 }
-
-/* ========= STATUS ========= */
 
 function trocarStatus(p){
 
   const status =
-    document.getElementById(
-      'status' + p
-    ).value;
+    document.getElementById('status' + p).value;
 
   const badge =
-    document.getElementById(
-      'badge' + p
-    );
+    document.getElementById('badge' + p);
 
   badge.className = 'status';
 
   if(status.includes('irrigando')){
 
     badge.classList.add('irrigando');
-
-    badge.innerHTML =
-      '💦 ' + status;
+    badge.innerHTML = '💦 ' + status;
 
   }else if(status.includes('seco')){
 
     badge.classList.add('seco');
-
-    badge.innerHTML =
-      '🌵 ' + status;
+    badge.innerHTML = '🌵 ' + status;
 
   }else if(status.includes('parada')){
 
     badge.classList.add('parado');
-
-    badge.innerHTML =
-      '⛔ ' + status;
+    badge.innerHTML = '⛔ ' + status;
 
   }else{
 
     badge.classList.add('finalizado');
-
-    badge.innerHTML =
-      '✅ ' + status;
+    badge.innerHTML = '✅ ' + status;
   }
 
   salvar();
 }
-
-/* ========= HORAS ========= */
 
 function calcularHoras(inicio,fim){
 
@@ -440,523 +409,382 @@ function calcularHoras(inicio,fim){
   }
 
   const i = inicio.split(':');
-
   const f = fim.split(':');
 
   const d1 = new Date();
-
   const d2 = new Date();
 
   d1.setHours(i[0],i[1],0);
-
   d2.setHours(f[0],f[1],0);
 
   if(d2 < d1){
-
-    d2.setDate(
-      d2.getDate() + 1
-    );
+    d2.setDate(d2.getDate() + 1);
   }
 
-  const minutos =
-    (d2 - d1) / 60000;
+  const minutos = (d2 - d1) / 60000;
 
-  const horas =
-    Math.floor(minutos / 60);
+  const horas = Math.floor(minutos / 60);
+  const resto = Math.floor(minutos % 60);
 
-  const resto =
-    Math.floor(minutos % 60);
-
-  return horas + 'h ' +
-    resto + 'min';
+  return horas + 'h ' + resto + 'min';
 }
 
 function atualizarHoras(){
 
-  document.getElementById(
-    'horas1'
-  ).value =
+  document.getElementById('horas1').value =
     calcularHoras(
-      document.getElementById(
-        'inicio1'
-      ).value,
-
-      document.getElementById(
-        'fim1'
-      ).value
+      document.getElementById('inicio1').value,
+      document.getElementById('fim1').value
     );
 
-  document.getElementById(
-    'horas2'
-  ).value =
+  document.getElementById('horas2').value =
     calcularHoras(
-      document.getElementById(
-        'inicio2'
-      ).value,
-
-      document.getElementById(
-        'fim2'
-      ).value
+      document.getElementById('inicio2').value,
+      document.getElementById('fim2').value
     );
 
   calcularHorimetro();
 }
 
-/* ========= HORÍMETRO ========= */
-
 function calcularHorimetro(){
 
   const inicial =
     parseFloat(
-      document.getElementById(
-        'horimetroInicial2'
-      ).value
+      document.getElementById('horimetroInicial2').value
     );
 
   const final =
     parseFloat(
-      document.getElementById(
-        'horimetroFinal2'
-      ).value
+      document.getElementById('horimetroFinal2').value
     );
 
-  if(
-    !isNaN(inicial)
-    &&
-    !isNaN(final)
-  ){
+  if(!isNaN(inicial) && !isNaN(final)){
 
-    document.getElementById(
-      'totalHorimetro2'
-    ).value =
-      (final - inicial)
-      .toFixed(1)
-      + ' horas';
+    document.getElementById('totalHorimetro2').value =
+      (final - inicial).toFixed(1) + ' horas';
 
   }else{
 
-    document.getElementById(
-      'totalHorimetro2'
-    ).value = '';
+    document.getElementById('totalHorimetro2').value = '';
   }
 }
-
-/* ========= SALVAR ========= */
 
 function salvar(){
 
   const dados = {};
 
-  document.querySelectorAll(
-    'input,select,textarea'
-  )
-
+  document.querySelectorAll('input,select,textarea')
   .forEach(function(campo){
 
     if(campo.id){
-
-      dados[campo.id] =
-        campo.value;
+      dados[campo.id] = campo.value;
     }
 
   });
 
   localStorage.setItem(
-    'controle_irrigacao_fast',
+    'controle_irrigacao_offline',
     JSON.stringify(dados)
   );
 }
-
-/* ========= CARREGAR ========= */
 
 function carregar(){
 
   const dados =
     JSON.parse(
-      localStorage.getItem(
-        'controle_irrigacao_fast'
-      ) || '{}'
+      localStorage.getItem('controle_irrigacao_offline') || '{}'
     );
 
-  Object.keys(dados)
-  .forEach(function(id){
+  Object.keys(dados).forEach(function(id){
 
-    const campo =
-      document.getElementById(id);
+    const campo = document.getElementById(id);
 
     if(campo){
-
       campo.value = dados[id];
     }
 
   });
 
   trocarStatus(1);
-
   trocarStatus(2);
-
   atualizarHoras();
 }
 
-/* ========= VALIDAÇÃO ========= */
-
 function pivo1Completo(){
 
-  return(
-
-    document.getElementById(
-      'inicio1'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'fim1'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'percent1'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'sentido1'
-    ).value.trim() !== ''
+  return (
+    document.getElementById('inicio1').value.trim() !== '' &&
+    document.getElementById('fim1').value.trim() !== '' &&
+    document.getElementById('percent1').value.trim() !== '' &&
+    document.getElementById('sentido1').value.trim() !== ''
   );
 }
 
 function pivo2Completo(){
 
-  return(
-
-    document.getElementById(
-      'inicio2'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'fim2'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'percent2'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'sentido2'
-    ).value.trim() !== ''
-
-    &&
-
-    document.getElementById(
-      'local2'
-    ).value.trim() !== ''
+  return (
+    document.getElementById('inicio2').value.trim() !== '' &&
+    document.getElementById('fim2').value.trim() !== '' &&
+    document.getElementById('percent2').value.trim() !== '' &&
+    document.getElementById('sentido2').value.trim() !== '' &&
+    document.getElementById('local2').value.trim() !== ''
   );
 }
-
-/* ========= RELATÓRIO ========= */
 
 function gerarRelatorio(){
 
   let relatorio = '';
 
-  const data =
-    new Date()
-    .toLocaleDateString('pt-BR');
+  const data = new Date().toLocaleDateString('pt-BR');
 
-  relatorio +=
-    '🌾══════════════════════🌾\n';
+  relatorio += '🌾══════════════════════🌾\n';
+  relatorio += 'RELATÓRIO DE IRRIGAÇÃO\n';
+  relatorio += 'FAZENDA COXILHA\n';
+  relatorio += '🌾══════════════════════🌾\n\n';
 
-  relatorio +=
-    'RELATÓRIO DE IRRIGAÇÃO FAZENDA COXILHA\n';
-
-  relatorio +=
-    '🌾══════════════════════🌾\n\n';
-
-  relatorio +=
-    '📅 Data: ' + data + '\n\n';
+  relatorio += '📅 Data: ' + data + '\n\n';
 
   if(pivo1Completo()){
 
-    relatorio +=
-      '💧 PIVÔ 1\n\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '💧 PIVÔ 1\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    relatorio += '📌 Status: ' +
+      document.getElementById('status1').value + '\n';
+
+    relatorio += '🕒 Início: ' +
+      document.getElementById('inicio1').value + '\n';
+
+    relatorio += '🕒 Fim: ' +
+      document.getElementById('fim1').value + '\n';
+
+    relatorio += '🔄 Sentido: ' +
+      document.getElementById('sentido1').value + '\n';
+
+    relatorio += '📊 Percentual Atual: ' +
+      document.getElementById('percent1').value + '%\n';
+
+    relatorio += '⏱️ Horas Trabalhadas: ' +
+      document.getElementById('horas1').value + '\n\n';
+
+    relatorio += '📝 Observações:\n';
 
     relatorio +=
-      '📌 Status: '
-      +
-      document.getElementById(
-        'status1'
-      ).value + '\n';
+      (document.getElementById('obs1').value || 'Sem observações');
 
-    relatorio +=
-      '🕒 Início: '
-      +
-      document.getElementById(
-        'inicio1'
-      ).value + '\n';
-
-    relatorio +=
-      '🕒 Fim: '
-      +
-      document.getElementById(
-        'fim1'
-      ).value + '\n';
-
-    relatorio +=
-      '🔄 Sentido: '
-      +
-      document.getElementById(
-        'sentido1'
-      ).value + '\n';
-
-    relatorio +=
-      '📊 Percentual Atual: '
-      +
-      document.getElementById(
-        'percent1'
-      ).value + '%\n\n';
-
-    relatorio +=
-      '⏱️ Horas Trabalhadas:\n';
-
-    relatorio +=
-      document.getElementById(
-        'horas1'
-      ).value + '\n\n';
-
-    relatorio +=
-      '📝 Observações:\n';
-
-    relatorio +=
-      (
-        document.getElementById(
-          'obs1'
-        ).value
-        ||
-        'Sem observações'
-      )
-      + '\n\n';
+    relatorio += '\n\n';
   }
 
   if(pivo2Completo()){
 
-    relatorio +=
-      '💧 PIVÔ 2\n\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '💧 PIVÔ 2\n';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+    relatorio += '📌 Status: ' +
+      document.getElementById('status2').value + '\n';
+
+    relatorio += '📍 Local: ' +
+      document.getElementById('local2').value + '\n';
+
+    relatorio += '🕒 Início: ' +
+      document.getElementById('inicio2').value + '\n';
+
+    relatorio += '🕒 Fim: ' +
+      document.getElementById('fim2').value + '\n';
+
+    relatorio += '🔄 Sentido: ' +
+      document.getElementById('sentido2').value + '\n';
+
+    relatorio += '📊 Percentual Atual: ' +
+      document.getElementById('percent2').value + '%\n';
+
+    relatorio += '⏱️ Horas Trabalhadas: ' +
+      document.getElementById('horas2').value + '\n';
+
+    relatorio += '📈 Horímetro Inicial: ' +
+      (document.getElementById('horimetroInicial2').value || '-') + '\n';
+
+    relatorio += '📈 Horímetro Final: ' +
+      (document.getElementById('horimetroFinal2').value || '-') + '\n';
+
+    relatorio += '📈 Total Trabalhado: ' +
+      (document.getElementById('totalHorimetro2').value || '-') + '\n\n';
+
+    relatorio += '📝 Observações:\n';
 
     relatorio +=
-      '📌 Status: '
-      +
-      document.getElementById(
-        'status2'
-      ).value + '\n';
+      (document.getElementById('obs2').value || 'Sem observações');
 
-    relatorio +=
-      '📍 Local: '
-      +
-      document.getElementById(
-        'local2'
-      ).value + '\n';
-
-    relatorio +=
-      '🕒 Início: '
-      +
-      document.getElementById(
-        'inicio2'
-      ).value + '\n';
-
-    relatorio +=
-      '🕒 Fim: '
-      +
-      document.getElementById(
-        'fim2'
-      ).value + '\n';
-
-    relatorio +=
-      '🔄 Sentido: '
-      +
-      document.getElementById(
-        'sentido2'
-      ).value + '\n';
-
-    relatorio +=
-      '📊 Percentual Atual: '
-      +
-      document.getElementById(
-        'percent2'
-      ).value + '%\n\n';
-
-    relatorio +=
-      '⏱️ Horas Trabalhadas:\n';
-
-    relatorio +=
-      document.getElementById(
-        'horas2'
-      ).value + '\n\n';
-
-    relatorio +=
-      '📈 Horímetro Inicial: '
-      +
-      (
-        document.getElementById(
-          'horimetroInicial2'
-        ).value
-        || '-'
-      ) + '\n';
-
-    relatorio +=
-      '📈 Horímetro Final: '
-      +
-      (
-        document.getElementById(
-          'horimetroFinal2'
-        ).value
-        || '-'
-      ) + '\n';
-
-    relatorio +=
-      '📈 Total Trabalhado: '
-      +
-      (
-        document.getElementById(
-          'totalHorimetro2'
-        ).value
-        || '-'
-      ) + '\n\n';
-
-    relatorio +=
-      '📝 Observações:\n';
-
-    relatorio +=
-      (
-        document.getElementById(
-          'obs2'
-        ).value
-        ||
-        'Sem observações'
-      )
-      + '\n\n';
+    relatorio += '\n\n';
   }
 
-  if(
-    !pivo1Completo()
-    &&
-    !pivo2Completo()
-  ){
+  if(!pivo1Completo() && !pivo2Completo()){
 
     relatorio =
       '⚠️ Nenhum pivô possui informações completas.';
-
   }else{
 
-    relatorio +=
-      '👨‍💻 Desenvolvido por TALYS';
+    relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
+    relatorio += '👨‍💻 Desenvolvido por TALYS';
   }
 
-  document.getElementById(
-    'resultado'
-  ).innerText =
+  document.getElementById('resultado').innerText =
     relatorio;
 
   salvar();
 }
 
-/* ========= COPIAR ========= */
-
-function copiarRelatorio(){
+async function copiarRelatorio(){
 
   const texto =
-    document.getElementById(
-      'resultado'
-    ).innerText;
+    document.getElementById('resultado').innerText;
 
-  if(!texto){
+  if(!texto || texto.includes('aparecerá aqui')){
 
-    alert(
-      'Gere um relatório primeiro.'
-    );
-
+    alert('Gere um relatório primeiro.');
     return;
   }
 
-  navigator.clipboard
-  .writeText(texto);
+  try{
 
-  alert(
-    '✅ Relatório copiado!'
-  );
+    await navigator.clipboard.writeText(texto);
+
+    alert('✅ Relatório copiado!');
+
+  }catch(e){
+
+    alert('❌ Erro ao copiar relatório.');
+  }
 }
 
-/* ========= WHATSAPP APK ========= */
-/* ABRE O WHATSAPP REAL */
-/* NÃO ABRE WEBVIEW */
-/* COMPATÍVEL KODULAR */
+/*
+=========================================
+WHATSAPP NATIVO SEM WEBVIEW
+=========================================
+
+Esse método abre diretamente o aplicativo
+do WhatsApp no Android quando convertido
+em APK no Kodular/WebView.
+
+=========================================
+*/
 
 function enviarWhatsApp(){
 
   const texto =
-    document.getElementById(
-      'resultado'
-    ).innerText.trim();
+    document.getElementById('resultado').innerText;
 
-  if(!texto){
+  if(!texto || texto.includes('aparecerá aqui')){
 
-    alert(
-      'Gere um relatório primeiro.'
-    );
-
+    alert('Gere um relatório primeiro.');
     return;
   }
 
-  const mensagem =
-    encodeURIComponent(texto);
+  const mensagem = encodeURIComponent(texto);
 
-  /* INTENT ANDROID */
+  /*
+    PRIORIDADE:
+    1 - WhatsApp App Android
+    2 - WhatsApp Business
+    3 - fallback wa.me
+  */
 
-  const intent =
-    'intent://send?text='
-    +
-    mensagem
-    +
-    '#Intent;scheme=smsto;package=com.whatsapp;end';
+  const urlApp =
+    'whatsapp://send?text=' + mensagem;
+
+  const urlBusiness =
+    'intent://send?text=' + mensagem +
+    '#Intent;scheme=whatsapp;package=com.whatsapp.w4b;end';
+
+  const fallback =
+    'https://wa.me/?text=' + mensagem;
 
   try{
 
-    window.location.href =
-      intent;
+    /*
+      Android/Kodular:
+      força abertura externa do WhatsApp
+    */
+
+    window.location.href = urlApp;
+
+    setTimeout(function(){
+
+      try{
+
+        window.location.href = urlBusiness;
+
+      }catch(e2){
+
+        setTimeout(function(){
+
+          window.open(fallback,'_system');
+
+        },1500);
+      }
+
+    },1000);
 
   }catch(e){
 
-    /* FALLBACK */
-
-    window.location.href =
-      'https://wa.me/?text='
-      + mensagem;
+    window.open(fallback,'_system');
   }
 }
 
-/* ========= EVENTOS ========= */
+document.addEventListener('input',function(){
 
-document.addEventListener(
-  'input',
-  function(){
+  atualizarHoras();
+  salvar();
 
-    atualizarHoras();
+});
 
-    salvar();
+window.onload = function(){
+
+  carregar();
+
+  /*
+    MONITOR DE INTERNET
+  */
+
+  function atualizarStatusInternet(){
+
+    const box =
+      document.getElementById('offlineStatus');
+
+    if(navigator.onLine){
+
+      box.innerHTML =
+        '✅ Aplicativo Online';
+
+      box.style.background =
+        '#1B5E20';
+
+    }else{
+
+      box.innerHTML =
+        '📴 Funcionando Offline';
+
+      box.style.background =
+        '#EF6C00';
+    }
   }
-);
 
-window.onload = carregar;
+  atualizarStatusInternet();
+
+  window.addEventListener(
+    'online',
+    atualizarStatusInternet
+  );
+
+  window.addEventListener(
+    'offline',
+    atualizarStatusInternet
+  );
+};
 
 </script>
 
 </body>
-  </html>
+</html>
