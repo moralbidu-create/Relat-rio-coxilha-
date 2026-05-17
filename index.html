@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Controle Inteligente de Irrigação</title>
+
+<!-- PWA -->
+<meta name="theme-color" content="#1565C0">
+<link rel="manifest" href="manifest.json">
 
 <style>
 
@@ -170,6 +173,15 @@ footer{
   font-size:14px;
 }
 
+.offline-box{
+  margin-top:20px;
+  padding:14px;
+  background:#1E88E5;
+  border-radius:14px;
+  text-align:center;
+  font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -185,6 +197,10 @@ footer{
 👨‍💻 TALYS
 </div>
 
+</div>
+
+<div class="offline-box">
+📡 Aplicativo funcionando OFFLINE
 </div>
 
 <div class="grid">
@@ -324,7 +340,7 @@ footer{
 </button>
 
 <button type="button" class="btn-whats" onclick="enviarWhatsApp()">
-📲 WhatsApp
+📲 Enviar para WhatsApp
 </button>
 
 </div>
@@ -488,8 +504,6 @@ function carregar(){
   atualizarHoras();
 }
 
-// VALIDAÇÃO COMPLETA DOS PIVÔS
-
 function pivo1Completo(){
 
   return (
@@ -523,10 +537,6 @@ function gerarRelatorio(){
 
   relatorio += '📅 Data: ' + data + '\n\n';
 
-  // =========================
-  // PIVÔ 1
-  // =========================
-
   if(pivo1Completo()){
 
     relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
@@ -554,10 +564,6 @@ function gerarRelatorio(){
     relatorio += '📝 Observações:\n';
     relatorio += (document.getElementById('obs1').value || 'Sem observações') + '\n\n';
   }
-
-  // =========================
-  // PIVÔ 2
-  // =========================
 
   if(pivo2Completo()){
 
@@ -599,13 +605,10 @@ function gerarRelatorio(){
     relatorio += (document.getElementById('obs2').value || 'Sem observações') + '\n\n';
   }
 
-  // =========================
-  // SEM DADOS
-  // =========================
-
   if(!pivo1Completo() && !pivo2Completo()){
 
     relatorio = '⚠️ Nenhum pivô possui informações completas.';
+
   }else{
 
     relatorio += '━━━━━━━━━━━━━━━━━━━━━━\n';
@@ -627,10 +630,16 @@ function copiarRelatorio(){
     return;
   }
 
-  navigator.clipboard.writeText(texto);
-
-  alert('✅ Relatório copiado!');
+  navigator.clipboard.writeText(texto)
+  .then(() => {
+    alert('✅ Relatório copiado!');
+  })
+  .catch(() => {
+    alert('Erro ao copiar relatório.');
+  });
 }
+
+/* ========= CORREÇÃO WHATSAPP APK ========= */
 
 function enviarWhatsApp(){
 
@@ -642,11 +651,49 @@ function enviarWhatsApp(){
     return;
   }
 
-  const url =
-    'https://wa.me/?text=' +
-    encodeURIComponent(texto);
+  const mensagem = encodeURIComponent(texto);
 
-  window.open(url,'_blank');
+  /* Compatível com APK Android */
+
+  const url = "https://api.whatsapp.com/send?text=" + mensagem;
+
+  window.location.href = url;
+}
+
+/* ========= OFFLINE ========= */
+
+if ('serviceWorker' in navigator) {
+
+  const swCode = `
+    const CACHE_NAME = 'irrigacao-offline-v1';
+
+    self.addEventListener('install', event => {
+      event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+          return cache.addAll(['./']);
+        })
+      );
+    });
+
+    self.addEventListener('fetch', event => {
+      event.respondWith(
+        caches.match(event.request).then(response => {
+          return response || fetch(event.request);
+        })
+      );
+    });
+  `;
+
+  const blob = new Blob([swCode], {
+    type: 'application/javascript'
+  });
+
+  const swURL = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swURL)
+    .then(() => {
+      console.log('Offline ativado');
+    });
 }
 
 document.addEventListener('input',function(){
